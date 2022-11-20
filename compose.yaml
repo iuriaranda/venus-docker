@@ -1,0 +1,21 @@
+version: "3"
+services:
+  venus:
+    image: venusos
+    volumes:
+      - venus:/data
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+    restart: always
+    devices:
+      - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_123456789XZY-if00-port0:/dev/ttyMK3"
+      - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE4G679M-if00-port0:/dev/ttyVEDirect"
+    networks:
+      - mosquitto_default
+    environment:
+      - "MQTT_BROKER_PASS=${MQTT_BROKER_PASS}"
+      - "MQTT_BROKER_HOST=mosquitto"
+networks:
+  mosquitto_default:
+    external: true
+volumes:
+  venus:
