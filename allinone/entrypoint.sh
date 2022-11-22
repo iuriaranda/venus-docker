@@ -1,5 +1,7 @@
 #!/bin/sh
 
+service dbus start
+
 mkdir -p /data/conf /data/db
 mkdir -p /data/var/lib/mk2-dbus
 

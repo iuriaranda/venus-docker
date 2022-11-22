@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  dbus:
+    build: ./dbus
+    restart: always
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+  localsettings:
+    build: ./localsettings
+    restart: always
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
+  mk2-dbus:
+    build: ./mk2-dbus
+    restart: always
+    devices:
+      # - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HQ2127GTUGD-if00-port0:/dev/ttyMK3"
+      - "/dev/tty0:/dev/ttyMK3"
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
+  vedirect:
+    build: ./vedirect
+    restart: always
+    devices:
+      # - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE6GBL6H-if00-port0:/dev/ttyVEDirect"
+      - "/dev/tty0:/dev/ttyVEDirect"
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
+  # dbus-mqtt:
+  #   build: ./dbus-mqtt
+  #   restart: always
+  #   volumes:
+  #     - "var_run_dbus:/var/run/dbus"
+  #     - "data:/data"
+  #   environment:
+  #     - "MQTT_BROKER_HOST=mosquitto"
+  # mosquitto:
+  #   image: eclipse-mosquitto
+  #   ports:
+  #     - "1883:1883"
+  #     - "9001:9001"
+  #   volumes:
+  #     - mosquitto-config:/mosquitto/config
+  #     - mosquitto-data:/mosquitto/data
+  #     - mosquitto-log:/mosquitto/log
+  #   restart: always
+volumes:
+  mosquitto-config:
+  mosquitto-data:
+  mosquitto-log:
+  var_run_dbus:
+  data:
