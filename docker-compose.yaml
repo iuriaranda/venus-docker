@@ -11,6 +11,12 @@ services:
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
+  dbus-systemcalc-py:
+    build: ./dbus-systemcalc-py
+    restart: always
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
   mk2-dbus:
     build: ./mk2-dbus
     restart: always
