@@ -1,8 +1,6 @@
 FROM debian:buster-slim
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt update -qq && \
+RUN DEBIAN_FRONTEND=noninteractive apt update -qq && \
     apt install dbus -qq -y && \
     rm -rf /var/lib/apt/lists/*
 

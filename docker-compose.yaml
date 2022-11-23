@@ -29,24 +29,24 @@ services:
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
-  # dbus-mqtt:
-  #   build: ./dbus-mqtt
-  #   restart: always
-  #   volumes:
-  #     - "var_run_dbus:/var/run/dbus"
-  #     - "data:/data"
-  #   environment:
-  #     - "MQTT_BROKER_HOST=mosquitto"
-  # mosquitto:
-  #   image: eclipse-mosquitto
-  #   ports:
-  #     - "1883:1883"
-  #     - "9001:9001"
-  #   volumes:
-  #     - mosquitto-config:/mosquitto/config
-  #     - mosquitto-data:/mosquitto/data
-  #     - mosquitto-log:/mosquitto/log
-  #   restart: always
+  dbus-mqtt:
+    build: ./dbus-mqtt
+    restart: always
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
+    environment:
+      - "MQTT_BROKER_HOST=mosquitto"
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mosquitto-config:/mosquitto/config
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+    restart: always
 volumes:
   mosquitto-config:
   mosquitto-data:
