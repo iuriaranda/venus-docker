@@ -17,6 +17,12 @@ services:
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
+  dbus-vebus-to-pvinverter:
+    build: ./dbus-vebus-to-pvinverter
+    restart: always
+    volumes:
+      - "var_run_dbus:/var/run/dbus"
+      - "data:/data"
   mk2-dbus:
     build: ./mk2-dbus
     restart: always
