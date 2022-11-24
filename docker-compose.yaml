@@ -2,53 +2,59 @@ version: "3.9"
 services:
   dbus:
     build: ./dbus
+    image: iuri/venus-dbus
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
   localsettings:
     build: ./localsettings
+    image: iuri/venus-localsettings
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   dbus-systemcalc-py:
     build: ./dbus-systemcalc-py
+    image: iuri/venus-dbus-systemcalc-py
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   vrmlogger:
     build: ./vrmlogger
+    image: iuri/venus-vrmlogger
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   dbus-vebus-to-pvinverter:
     build: ./dbus-vebus-to-pvinverter
+    image: iuri/venus-dbus-vebus-to-pvinverter
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   mk2-dbus:
     build: ./mk2-dbus
+    image: iuri/venus-mk2-dbus
     restart: always
     devices:
-      # - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HQ2127GTUGD-if00-port0:/dev/ttyMK3"
       - "/dev/tty0:/dev/ttyMK3"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   vedirect:
     build: ./vedirect
+    image: iuri/venus-vedirect
     restart: always
     devices:
-      # - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE6GBL6H-if00-port0:/dev/ttyVEDirect"
       - "/dev/tty0:/dev/ttyVEDirect"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
   dbus-mqtt:
     build: ./dbus-mqtt
+    image: iuri/venus-dbus-mqtt
     restart: always
     volumes:
       - "var_run_dbus:/var/run/dbus"
