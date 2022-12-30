@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ENV VEDIRECTDEV=/dev/ttyVEDirect
+ENV VEDIRECTDEV=/dev/ttyUSB0
 ENV VEDIRECTDBUSINSTANCE=0
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -qq && \

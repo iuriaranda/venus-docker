@@ -36,7 +36,9 @@ Collects data from a VE.Direct device and publishes it to the D-Bus. It requires
 
 You can find the USB device path in the Docker host by running `ls -l /dev/serial/by-id/`.
 
-You can run an instance of this container for each VE.Direct USB cable connected to the system. If you run more than one instance, you'll need to set a different instance number for each via the `VEDIRECTDBUSINSTANCE` environment variable.
+You can run an instance of this container for each VE.Direct USB cable connected to the system. If you run more than one instance, you'll need to set a different instance number for each via the `VEDIRECTDBUSINSTANCE` environment variable, mount the USB device to a different path in each container and set the `VEDIRECTDEV` environment variable to the path you mounted it.
+
+**Important**: always mount the VE.Direct USB device to a path like `/dev/ttyOx`, `/dev/ttySx` or `/dev/ttyUSBx` inside the container, e.g. `/dev/ttyUSB4`. This is because `vedirect` uses the `x` number in the device path to infer the D-Bus instance number for the device, and VRM and other Venus services make some assumptions regarding that number. So if you use another device name for the USB, your device might not be properly recognized. Because of this, even if all `mk2-dbus` and `vedirect` services run in separate containers, make sure to use different mount paths for each USB mounted inside those containers.
 
 ### mk2-dbus
 
@@ -46,9 +48,11 @@ You can find the USB device path in the Docker host by running `ls -l /dev/seria
 
 You can run an instance of this container for each VE.Bus USB cable connected to the system. If you run more than one instance, you'll need to mount the USB device to a different path in each container, and set the `MK3DEV` environment variable to the path you mounted it. This is because the device path inside the container is used to infer the path to a settings file that is stored in the shared `/data` volume.
 
+**Important**: always mount the MK3 USB device to a path like `/dev/ttyOx`, `/dev/ttySx` or `/dev/ttyUSBx` inside the container, e.g. `/dev/ttyS4`. This is because `mk2-dbus` uses the `x` number in the device path to infer the D-Bus instance number for the device, and VRM and other Venus services make some assumptions regarding that number. So if you use another device name for the USB, your device might not be properly recognized. Because of this, even if all `mk2-dbus` and `vedirect` services run in separate containers, make sure to use different mount paths for each USB mounted inside those containers.
+
 ### dbus-vebus-to-pvinverter
 
-Useful when you have an inverter connected via VE.Bus. Source code can be found [here](https://github.com/victronenergy/dbus_vebus_to_pvinverter)
+Useful when you have AC current sensors for a PV inverter, connected to the VE.Bus device. Source code can be found [here](https://github.com/victronenergy/dbus_vebus_to_pvinverter)
 
 ### vrmlogger
 
@@ -101,7 +105,9 @@ services:
     image: iuri/venus-vedirect
     restart: always
     devices:
-      - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE3TNY1H-if00-port0:/dev/ttyVEDirect"
+      - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE3TNY1H-if00-port0:/dev/ttyUSB0"
+    environment:
+      - "VEDIRECTDEV=ttyUSB0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
@@ -144,9 +150,9 @@ services:
     image: iuri/venus-mk2-dbus
     restart: always
     devices:
-      - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HQ1347GYUGD-if00-port0:/dev/ttyMK31"
+      - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HQ1347GYUGD-if00-port0:/dev/ttyS0"
     environment:
-      - "MK3DEV=/dev/ttyMK31"
+      - "MK3DEV=/dev/ttyS0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
@@ -154,9 +160,9 @@ services:
     image: iuri/venus-mk2-dbus
     restart: always
     devices:
-      - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HW2154GTOIT-if00-port1:/dev/ttyMK32"
+      - "/dev/serial/by-id/usb-VictronEnergy_MK3-USB_Interface_HW2154GTOIT-if00-port1:/dev/ttyS1"
     environment:
-      - "MK3DEV=/dev/ttyMK32"
+      - "MK3DEV=/dev/ttyS1"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"

@@ -39,7 +39,9 @@ services:
     image: iuri/venus-mk2-dbus
     restart: always
     devices:
-      - "/dev/tty0:/dev/ttyMK3"
+      - "/dev/tty0:/dev/ttyS0"
+    environment:
+      - "MK3DEV=ttyS0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
@@ -48,7 +50,9 @@ services:
     image: iuri/venus-vedirect
     restart: always
     devices:
-      - "/dev/tty0:/dev/ttyVEDirect"
+      - "/dev/tty0:/dev/ttyUSB0"
+    environment:
+      - "VEDIRECTDEV=ttyUSB0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"

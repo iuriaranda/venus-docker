@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ENV MK3DEV=/dev/ttyMK3
+ENV MK3DEV=/dev/ttyS0
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -qq && \
     apt install ca-certificates -qq -y && \
