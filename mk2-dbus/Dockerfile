@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM arm32v7/debian:buster-slim
 
 ENV MK3DEV=/dev/ttyS0
 

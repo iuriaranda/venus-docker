@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM arm32v7/debian:buster-slim
 
 ENV VEDIRECTDEV=/dev/ttyUSB0
 ENV VEDIRECTDBUSINSTANCE=0

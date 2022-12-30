@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM arm32v7/debian:bullseye-slim
 # we need bullseye for this one since it's only compatible with python-3.8 and up
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -qq && \

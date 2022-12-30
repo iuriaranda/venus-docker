@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM arm32v7/debian:buster-slim
 
 ENV MQTT_BROKER_USER=
 ENV MQTT_BROKER_PASS=

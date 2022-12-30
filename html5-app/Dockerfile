@@ -1,4 +1,4 @@
-FROM node:18
+FROM arm32v7/node:18
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -y -qq && \
     apt install git -y -qq && \

@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM arm32v7/debian:buster-slim
 
 RUN DEBIAN_FRONTEND=noninteractive apt update -qq && \
     apt install ca-certificates -qq -y && \
