@@ -52,7 +52,7 @@ services:
     devices:
       - "/dev/tty0:/dev/ttyUSB0"
     environment:
-      - "VEDIRECTDEV=ttyUSB0"
+      - "VEDIRECTDEV=/dev/ttyUSB0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"

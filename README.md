@@ -107,7 +107,7 @@ services:
     devices:
       - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE3TNY1H-if00-port0:/dev/ttyUSB0"
     environment:
-      - "VEDIRECTDEV=ttyUSB0"
+      - "VEDIRECTDEV=/dev/ttyUSB0"
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
