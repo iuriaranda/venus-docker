@@ -65,7 +65,6 @@ You'll need to register your device to VRM using the VRM Portal ID you'll find i
 These other images are still a work in progress:
 
 - `html5-app`: https://github.com/victronenergy/venus-html5-app
-- `allinone`: an image with all services running together
 
 ## Examples
 
