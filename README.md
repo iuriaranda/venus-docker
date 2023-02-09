@@ -1,5 +1,7 @@
 # VenusOS in Docker
 
+*This repository is in no way approved by or afiliated with the official Victron Energy repository.*
+
 This is a dockerized [VenusOS](https://github.com/victronenergy/venus) distribution. FYI Venus OS is an OS from Victron Energy for the Raspberry Pi and BeagleBone Black, a part from their own GX Product family of devices.
 
 **Note** that this only contains a subset of the features that you can find in a device running the full Venus operating system. This can be useful if you just want to gather as much data as you can from your Victron devices and dump them into an existing MQTT broker, or to ship them to VRM so you can monitor your system remotely. Note that this project doesn't provide the Victron UI either.
@@ -16,7 +18,7 @@ Here's a quick definition of each of the Docker images in this repository.
 
 ### dbus
 
-Runs the D-Bus on a socket at `/var/run/dbus/system_bus_socket`. A volume should be mounted at `/var/run/dbus/` and shared with all other containers so they can all access the D-Bus. For obvious reasons this is a crucial service that is needed by all the rest.
+Runs the D-Bus on a socket at `/var/run/dbus/system_bus_socket`. A volume should be mounted at `/var/run/dbus/` and shared with all other containers so they can all access the D-Bus. This container is only needed in case you want to run the Venus services on an isolated D-Bus. If you want to run them on the host system D-Bus then you can omit this container and mount the host system D-Bus socket in the other services instead (check out the [`system-dbus` example](#host-system-dbus)).
 
 ### localsettings
 
@@ -61,6 +63,8 @@ Collects data from the D-Bus and publishes it to Victron's VRM portal.
 You'll need to register your device to VRM using the VRM Portal ID you'll find in the container logs when it starts, it should be a 12-digit hexadecimal number that looks like this `b827eb010101`. Register on the [VRM site](https://vrm.victronenergy.com/), and then [Add a site](https://vrm.victronenergy.com/site/add).
 
 ### WIP
+
+:construction::construction:
 
 These other images are still a work in progress:
 
@@ -173,7 +177,68 @@ services:
       - "data:/data"
     environment:
       - "MQTT_BROKER_HOST=mosquitto"
+      - "MQTT_BROKER_USER=venus"
+      - "MQTT_BROKER_PASS=verysecretpassword"
 volumes:
   var_run_dbus:
   data:
 ```
+
+### Host System DBus
+
+This omits the `dbus` container and runs on the host system DBus socket. Of course this will "pollute" your host system DBus with all the victron data, but it might be useful if you want to use that data in other services running in the system, like SignalK or Node-RED.
+
+```yaml
+version: "3.9"
+services:
+  localsettings:
+    image: iuri/venus-localsettings
+    restart: always
+    volumes:
+      - "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+      - "data:/data"
+  dbus-systemcalc-py:
+    image: iuri/venus-dbus-systemcalc-py
+    restart: always
+    volumes:
+      - "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+      - "data:/data"
+  vrmlogger:
+    image: iuri/venus-vrmlogger
+    restart: always
+    volumes:
+      - "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+      - "data:/data"
+  vedirect:
+    image: iuri/venus-vedirect
+    restart: always
+    devices:
+      - "/dev/serial/by-id/usb-VictronEnergy_BV_VE_Direct_cable_VE3TNY1H-if00-port0:/dev/ttyUSB0"
+    environment:
+      - "VEDIRECTDEV=/dev/ttyUSB0"
+    volumes:
+      - "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+      - "data:/data"
+volumes:
+  data:
+```
+
+:warning::warning:
+
+**Note** that for this to work, you need to allow the Victron services to talk to the host system DBus. You do that by placing a configuration file in the DBus config folder:
+
+```bash
+sudo tee -a /etc/dbus-1/system.d/com.victronenergy.conf > /dev/null << EOF
+<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+  <policy user="root">
+    <allow own_prefix="com.victronenergy"/>
+    <allow send_destination="*"/>
+  </policy>
+</busconfig>
+EOF
+```
+
+Noramlly the system DBus should reload the configuration automatically, otherwise run `sudo systemctl reload dbus.service`.
+
+Also, I've found that in Ubuntu it's also necessary to run the containers in privileged mode, otherwise AppArmor denies them access to the host system DBus. Works fine without privileged mode in Debian and Raspbian though.
