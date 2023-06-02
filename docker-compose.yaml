@@ -24,6 +24,7 @@ services:
     build: ./vrmlogger
     image: iuri/venus-vrmlogger
     restart: always
+    network_mode: host
     volumes:
       - "var_run_dbus:/var/run/dbus"
       - "data:/data"
